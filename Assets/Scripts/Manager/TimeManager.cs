@@ -10,10 +10,14 @@ public class TimeManager : MonoBehaviour
     public RectTransform[] timingRect = null;
     Vector2[] timingBoxs = null;
 
+    EffectManager theEffect;
+
     void Start()
     {
-        timingBoxs = new Vector2[timingRect.Length];
-        for(int i=0; i<timingRect.Length; i++)
+        theEffect = FindObjectOfType<EffectManager>();
+
+        timingBoxs = new Vector2[4];
+        for(int i=0; i<4; i++)
         {
             timingBoxs[i].Set(Center.localPosition.x - timingRect[i].rect.width / 2,
                               Center.localPosition.x + timingRect[i].rect.width / 2);
@@ -28,16 +32,22 @@ public class TimeManager : MonoBehaviour
 
             for(int x=0; x < timingBoxs.Length; x++)
             {
-                if(timingBoxs[x].x <= t_notPosX && t_notPosX <= timingBoxs[x].y)
+                if(timingBoxs[x].x <= t_notPosX+10 && t_notPosX-10 <= timingBoxs[x].x)
                 {
-                    //Destroy(boxNoteList[i]);
+                    // 노트 제거
                     boxNoteList[i].GetComponent<Note>().HideNote();
                     boxNoteList.RemoveAt(i);
-                    Debug.Log("Hit " + x);
+
+                    // 이펙트 연출
+                    if (x < timingBoxs.Length - 1)
+                        theEffect.NoteHitEffect();
+                    Debug.Log(x);
+                    theEffect.JudgementEffect(x);
+
                     return;
                 }
             }
         }
-        Debug.Log("Miss");
+    //    theEffect.JudgementEffect(timingBoxs.Length-1);
     }
 }
